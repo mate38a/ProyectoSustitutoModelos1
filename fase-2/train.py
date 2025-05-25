@@ -40,16 +40,16 @@ def preprocess(df):
     for col in ['vendor_id', 'store_and_fwd_flag']:
         if col in df.columns:
             le = LabelEncoder()
-            df[col] = le.fit_transform(df[col])
+            df[col] = le.fit_transform(df[col]) # codificar las variables categóricas en números enteros (0, 1, 2, ...) y guardarlas en la columna 'col' del DataFrame 'df'
 
     return df
 
 def main():
     if len(sys.argv) != 2:
         print("Uso: python train.py ruta_al_train_csv")
-        sys.exit(1)
+        sys.exit(1) # si no se pasan argumentos, muestra el mensaje de error y sale del programa
 
-    train_csv = sys.argv[1]
+    train_csv = sys.argv[1] # ruta al csv de entrenamiento
 
     # Cargar datos
     df = pd.read_csv(train_csv)
@@ -73,7 +73,7 @@ def main():
     print("Modelo entrenado")
 
     # Guardar modelo
-    joblib.dump(model, 'model.joblib')
+    joblib.dump(model, 'data/model.joblib')
     print("Modelo guardado en model.joblib")
 
 if __name__ == '__main__':

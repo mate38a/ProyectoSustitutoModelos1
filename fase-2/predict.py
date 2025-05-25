@@ -61,13 +61,16 @@ def main():
     print("Preprocesamiento realizado")
 
     # Cargar modelo
-    model = joblib.load('model.joblib')
+    model = joblib.load('data/model.joblib')
+    print("Modelo cargado")
 
     # Predecir
     preds = model.predict(X)
+    print("Predicciones realizadas")
 
     # Crear DataFrame para salida
     df_out = pd.DataFrame({'id': ids, 'trip_duration': preds})
+    print(f"Salida: {df_out.shape[0]} filas")
 
     # Guardar CSV
     df_out.to_csv(output_csv, index=False)
