@@ -2,13 +2,11 @@
 """
 predict.py
 
-Script para hacer predicciones de trip_duration con un modelo entrenado.
+Realiza predicciones usando modelo guardado en /app/data/model.joblib
+lee datos desde /app/data y guarda predicciones en /app/data
 
 Uso:
-    python predict.py ruta_al_test_csv ruta_al_output_csv
-
-El CSV de test debe contener todas las columnas excepto 'trip_duration',
-pero debe incluir 'id' para identificar cada fila.
+    python predict.py /app/data/test.csv /app/data/predictions.csv
 """
 
 import sys
@@ -17,62 +15,53 @@ import joblib
 from sklearn.preprocessing import LabelEncoder
 
 def preprocess(df):
-    # Guardamos id para salida
     ids = df['id'].copy()
 
-    # Convertir fechas a datetime
     df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'])
-    df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'])
 
-    # Extraer features temporales
+    # Solo convertir dropoff_datetime si existe
+    if 'dropoff_datetime' in df.columns:
+        df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'])
+
     df['pickup_hour'] = df['pickup_datetime'].dt.hour
     df['pickup_dayofweek'] = df['pickup_datetime'].dt.dayofweek
     df['pickup_day'] = df['pickup_datetime'].dt.day
     df['pickup_month'] = df['pickup_datetime'].dt.month
 
-    # Borrar las columnas originales
-    df = df.drop(columns=['pickup_datetime', 'dropoff_datetime'])
+    # Eliminar columnas de fecha que existan
+    cols_to_drop = ['pickup_datetime']
+    if 'dropoff_datetime' in df.columns:
+        cols_to_drop.append('dropoff_datetime')
+    df = df.drop(columns=cols_to_drop)
 
-    # Codificar variables categóricas igual que en train
     for col in ['vendor_id', 'store_and_fwd_flag']:
         if col in df.columns:
             le = LabelEncoder()
             df[col] = le.fit_transform(df[col])
 
-    # Eliminar id para predecir
     df = df.drop(columns=['id'])
 
     return df, ids
 
+
 def main():
     if len(sys.argv) != 3:
-        print("Uso: python predict.py ruta_al_test_csv ruta_al_output_csv")
+        print("Uso: python predict.py /app/data/test.csv /app/data/predictions.csv")
         sys.exit(1)
 
     test_csv = sys.argv[1]
     output_csv = sys.argv[2]
 
-    # Cargar datos
     df = pd.read_csv(test_csv)
-    print(f"Datos de test cargados: {df.shape[0]} filas")
+    print(f"Datos test cargados: {df.shape[0]} filas")
 
-    # Preprocesar
     X, ids = preprocess(df)
     print("Preprocesamiento realizado")
 
-    # Cargar modelo
-    model = joblib.load('data/model.joblib')
-    print("Modelo cargado")
-
-    # Predecir
+    model = joblib.load('/app/data/model.joblib')
     preds = model.predict(X)
-    print("Predicciones realizadas")
 
-    # Crear DataFrame para salida
     df_out = pd.DataFrame({'id': ids, 'trip_duration': preds})
-    print(f"Salida: {df_out.shape[0]} filas")
-
-    # Guardar CSV
     df_out.to_csv(output_csv, index=False)
     print(f"Predicciones guardadas en {output_csv}")
 
