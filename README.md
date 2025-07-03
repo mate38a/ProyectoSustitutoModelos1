@@ -169,8 +169,26 @@ En esta fase, contenerizamos el proyecto con **Docker** para que sea portable y 
 
 ---
 
-### Próximos pasos
-- En la **Fase 3**, implementaremos una API REST para interactuar con el modelo mediante solicitudes HTTP.
+# Proyecto de Machine Learning - Fase 3
+
+## Descripción
+Este proyecto implementa un modelo predictivo para la duración de viajes de taxi (NYC Taxi Trip Duration). La Fase 3 crea una API REST para realizar predicciones y entrenar el modelo, desplegada en un contenedor Docker.
+
+## Estructura del repositorio
+- `fase-1/`: Notebook para entrenamiento y predicción.
+- `fase-2/`: Scripts `predict.py`, `train.py`, y Dockerfile base.
+- `fase-3/`: Scripts `apirest.py`, `client.py`, Dockerfile para la API, y datos.
+
+## Requisitos
+- Docker instalado.
+- Archivos `train.csv` y `model.joblib` en `data/`.
+
+## Instrucciones para ejecutar la Fase 3
+
+### 1. Construir el contenedor
+```bash
+cd fase-3
+docker build -t my-api-image:latest .
 
 ---
 
