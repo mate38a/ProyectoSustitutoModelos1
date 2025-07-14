@@ -149,4 +149,3 @@ curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -
 
 ---
 
-Este README está diseñado para ser claro, directo y enfocado en la ejecución sin requerir pasos adicionales de creación de archivos. Todos los recursos necesarios ya están incluidos en el repositorio. ¡Solo clona, construye y ejecuta! 🚀
